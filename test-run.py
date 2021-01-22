@@ -55,7 +55,7 @@ import time
 
 from lib import Options
 from lib.colorer import color_stdout
-from lib.utils import print_tail_n
+from lib.utils import print_tail_n, PY3
 from lib.worker import get_task_groups
 from lib.worker import get_reproduce_file
 from lib.worker import reproduce_task_groups
@@ -218,6 +218,15 @@ def main_consistent():
 
 
 if __name__ == "__main__":
+    # In Python 3 start method 'spawn' in multiprocessing module becomes
+    # default on Mac OS [1]. However 'spawn' method requires object serialization
+    # that doesn't work when objects use lambdas, whose for example used in
+    # class TestSuite (lib/test_suite.py). So this method is not acceptable
+    # for using with test-run. To workaround it can be possible to force
+    # fork mode with multiprocessing.set_start_method('fork').
+    if PY3:
+        multiprocessing.set_start_method('fork')
+
     # don't sure why, but it values 1 or 2 gives 1.5x speedup for parallel
     # test-run (and almost doesn't affect consistent test-run)
     os.environ['OMP_NUM_THREADS'] = '2'
