@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 """Tarantool regression test suite front-end."""
 
 # Redistribution and use in source and binary forms, with or without
